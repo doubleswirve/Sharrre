@@ -20,7 +20,8 @@
       delicious: false,
       stumbleupon: false,
       linkedin: false,
-      pinterest: false
+      pinterest: false,
+      reddit: false
     },
     shareTotal: 0,
     template: '',
@@ -92,6 +93,10 @@
         media: '',
         description: '',
         layout: 'horizontal'
+      },
+      reddit: {
+        url: '',
+        points: false
       }
     }
   },
@@ -111,7 +116,8 @@
     //stumbleupon: "http://www.stumbleupon.com/services/1.01/badge.getinfo?url={url}&format=jsonp&callback=?",
     stumbleupon: "",
     linkedin: "http://www.linkedin.com/countserv/count/share?format=jsonp&url={url}&callback=?",
-    pinterest: "http://api.pinterest.com/v1/urls/count.json?url={url}&callback=?"
+    pinterest: "http://api.pinterest.com/v1/urls/count.json?url={url}&callback=?",
+    reddit: "http://www.reddit.com/api/info.json?url={url}&jsonp=?"
   },
   /* Load share buttons asynchronously
   ================================================== */
@@ -260,7 +266,8 @@
         li.src = '//assets.pinterest.com/js/pinit.js'; 
         var s = document.getElementsByTagName('script')[0];s.parentNode.insertBefore(li, s);
       })();
-    }
+    },
+    reddit: function(self){}
   },
   /* Tracking for Google Analytics
   ================================================== */
@@ -313,7 +320,8 @@
     },
     pinterest: function(){
       //if somenone find a solution, mail me !
-    }
+    },
+    reddit: function(){}
   },
   /* Popup for each social network
   ================================================== */
@@ -341,6 +349,9 @@
     },
     pinterest: function(opt){
       window.open('http://pinterest.com/pin/create/button/?url='+encodeURIComponent((opt.buttons.pinterest.url !== '' ? opt.buttons.pinterest.url : opt.url))+'&media='+encodeURIComponent(opt.buttons.pinterest.media)+'&description='+opt.buttons.pinterest.description, 'pinterest', 'toolbar=no,width=700,height=300');
+    },
+    reddit: function(opt){
+      window.open('http://www.reddit.com/submit?url='+encodeURIComponent((opt.buttons.reddit.url !== '' ? opt.buttons.reddit.url : opt.url)), 'reddit', 'toolbar=no,width=700,height=300');
     }
   };
 
@@ -458,6 +469,9 @@
 		//get the FB total count (shares, likes and more)
         else if(json.data && json.data.length > 0 && typeof json.data[0].total_count !== "undefined"){ //Facebook total count
           count += parseInt(json.data[0].total_count, 10);
+        }
+        else if(json.data && json.data.children > 0 && json.data.children[0].num_comments !== undefined){ //Reddit
+          count += parseInt(json.data.children[0].num_comments);
         }
         else if(typeof json[0] !== "undefined"){  //Delicious
           count += parseInt(json[0].total_posts, 10);
